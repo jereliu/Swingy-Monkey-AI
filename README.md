@@ -8,11 +8,11 @@
 ## Logistics
 
 * Team Name: la dernière dame M
-* Tip on installing [pygame](http://www.reddit.com/r/pygame/comments/21tp7n/how_to_install_pygame_on_osx_mavericks/):
+* Tip on installing [pygame](http://stackoverflow.com/questions/22314904/installing-pygame-with-enthought-canopy-on-mac):
 
->     brew tap Homebrew/python
->     brew update
->     brew install pygame
+>     brew install sdl sdl_ttf sdl_image sdl_mixer
+>     brew install hg
+>     sudo pip install hg+http://bitbucket.org/pygame/pygame
 
 
 ## TO-DO
