@@ -16,8 +16,10 @@ class Learner:
         self.last_reward = None
 
     def action_callback(self, state):
-        '''Implement this function to learn things and take actions.
-        Return 0 if you don't want to jump and 1 if you do.'''
+        '''
+        Implement this function to learn things and take actions.
+        Return 0 if you don't want to jump and 1 if you do.
+        '''
 
         # You might do some learning here based on the current state and the last state.
 

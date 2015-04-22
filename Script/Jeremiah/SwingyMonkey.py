@@ -1,12 +1,16 @@
 import sys
+import os
 import pygame as pg
 import numpy.random as npr
+
+os.chdir("/Users/Jeremiah/GitHub/CS-181-Practical-4/Script/Jeremiah")
 
 class SwingyMonkey:
 
     def __init__(self, sound=True, text=None, action_callback=None, 
                  reward_callback=None, tick_length=100):
-        """Constructor for the SwingyMonkey class.
+        """
+        Constructor for the SwingyMonkey class.
 
         Possible Keyword Arguments:
 
@@ -26,7 +30,8 @@ class SwingyMonkey:
 
         tick_length: Time in milliseconds between game steps.
                      Defaults to 100ms, but you might want to make it
-                     smaller for training."""
+                     smaller for training.
+        """
 
         # Don't change these.
         self.screen_width  = 600
@@ -57,7 +62,8 @@ class SwingyMonkey:
             self.sound = False
 
         # Set up the screen for rendering.
-        self.screen = pg.display.set_mode((self.screen_width, self.screen_height), 0, 32)
+        self.screen = \
+            pg.display.set_mode((self.screen_width, self.screen_height), 0, 32)
 
         # Load external resources.
         self.background_img = pg.image.load('res/jungle-pixel.png').convert()
@@ -86,7 +92,8 @@ class SwingyMonkey:
         self.iter  = 0
 
     def get_state(self):
-        '''Returns a snapshot of the current game state, computed
+        '''
+        Returns a snapshot of the current game state, computed
         relative to to the next oncoming tree.  This is a dictionary
         with the following structure:
         { 'score': <current score>,
@@ -95,7 +102,8 @@ class SwingyMonkey:
                     'bot':  <screen height of bottom of tree trunk gap> },
           'monkey': { 'vel': <current monkey y-axis speed in pixels per iteration>,
                       'top': <screen height of top of monkey>,
-                      'bot': <screen height of bottom of monkey> }}'''                      
+                      'bot': <screen height of bottom of monkey> }}
+        '''
 
         # Find the next closest tree.
         for tree in self.trees:
@@ -113,10 +121,12 @@ class SwingyMonkey:
                              'bot': self.screen_height - self.monkey_loc - self.monkey_img.get_height()/2}}
 
     def game_loop(self):
-        '''This is called every game tick.  You call this in a loop
+        '''
+        This is called every game tick.  You call this in a loop
         until it returns false, which means you hit a tree trunk, fell
         off the bottom of the screen, or jumped off the top of the
-        screen.  It calls the action and reward callbacks.'''
+        screen.  It calls the action and reward callbacks.
+        '''
 
         # Render the background.
         self.screen.blit(self.background_img, (self.iter,0))
@@ -129,6 +139,7 @@ class SwingyMonkey:
             self.trees.append( { 'x': self.screen_width+1,
                                  'y': int((0.3 + npr.rand()*0.65)*(self.screen_height-self.tree_gap)),
                                  's': False })
+
         # Process input events.
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -207,7 +218,7 @@ class SwingyMonkey:
 
         # Render the score
         score_text = self.font.render("Score: %d" % (self.score), 1, (230, 40, 40))
-	self.screen.blit(score_text, score_text.get_rect())
+        self.screen.blit(score_text, score_text.get_rect())
 
         if self.text is not None:
             text = self.font.render(self.text, 1, (230, 40, 40))
