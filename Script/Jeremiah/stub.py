@@ -35,12 +35,15 @@ class Learner:
         return self.last_action
 
     def reward_callback(self, reward):
-        '''This gets called so you can see what reward you get.'''
+        '''
+        This gets called so you can see what reward you get.
+        '''
 
         self.last_reward = reward
 
-iters = 100
+iters = 50
 learner = Learner()
+reward = []
 
 for ii in xrange(iters):
 
@@ -54,10 +57,8 @@ for ii in xrange(iters):
     # Loop until you hit something.
     while swing.game_loop():
         pass
+    reward.append(swing.get_state()["score"])
 
     # Reset the state of the learner.
     learner.reset()
 
-
-
-    
