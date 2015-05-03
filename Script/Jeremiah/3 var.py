@@ -174,17 +174,18 @@ class Learner:
                     np.argmax(self.Q[idx_x_new, idx_p_new, idx_v_new])
                 new_action_num = np.abs(decision_epsilon - decision_optimal)
                 new_action = bool(new_action_num)
-
-            print "(" + str(int(idx_x_new)) + "\t" + \
-                  str(int(idx_p_new)) + "\t" + str(int(idx_v_new)) + ")" + "\t" + \
-                    str(k) +\
-                    "\t" + "Action:" + str(new_action) + " \t" +\
-                    str(round(self.Q[idx_x_new, idx_p_new,
-                                     idx_v_new, new_action],   3)) +\
-                    " vs. " +\
-                    str(round(self.Q[idx_x_new, idx_p_new,
-                                     idx_v_new, 1-new_action], 3))
-
+            '''
+            if new_action is True:
+                print "(" + str(int(idx_x_new)) + "\t" + \
+                      str(int(idx_p_new)) + "\t" + str(int(idx_v_new)) + ")" + "\t" + \
+                      str(k) + \
+                      "\t" + "Action:" + str(new_action) + " \t" + \
+                      str(round(self.Q[idx_x_new, idx_p_new,
+                                       idx_v_new, new_action], 3)) + \
+                      " vs. " + \
+                      str(round(self.Q[idx_x_new, idx_p_new,
+                                       idx_v_new, 1 - new_action], 3))
+            '''
         new_action_num = int(new_action)
         self.learnTime[idx_x_new, idx_p_new, idx_v_new, new_action_num] += 1
         self.last_action = new_action
@@ -217,12 +218,16 @@ iters = 10000
 learner = Learner()
 reward = []
 score = []
+state = [] # state when fail
 score_cur = 0
 ii = 0
 
 #for ii in xrange(iters):
 
-while score_cur < 100:
+Qmat = np.load("Qmat.npy")
+learner.Q = Qmat
+
+while score_cur < 1000:
     ii += 1
     # Make a new monkey object.
     swing = SwingyMonkey(sound=False,            # Don't play sounds.
@@ -236,10 +241,20 @@ while score_cur < 100:
         pass
     reward.append(learner.last_reward)
     score_cur = swing.get_state()["score"]
-    score.append(swing.get_state()["score"])
+    veloc_cur = swing.get_state()["monkey"]["vel"]
+    score.append(score_cur)
+    state.append(swing.get_state())
 
+    if ii % 50 == 0:
+        np.save("Qmat.npy", learner.Q)
+    '''
     print "################### Score = " + \
           str(swing.get_state()["score"]) + " ########################"
+    '''
+    print "Iter " + str(ii) + ": Score: " + str(score_cur) + \
+          ",\tMean: " + str(round(np.mean(score[(ii-10):(ii-1)]), 3)) +\
+          ",\tVel:" + str(veloc_cur)
     # Reset the state of the learner.
     learner.reset()
 
+    np.save("Qmat.npy", learner.Q)
