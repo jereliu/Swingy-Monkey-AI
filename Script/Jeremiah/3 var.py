@@ -89,6 +89,24 @@ class Learner:
 
         return idx_x, idx_p, idx_v
 
+    def result_callback(self):
+        state = self.last_state
+        screen_height = 400
+        monkey_bot = state["monkey"]["bot"]
+        monkey_top = state["monkey"]["top"]
+        trunk_top = state["tree"]["top"]
+        trunk_bot = state["tree"]["bot"]
+        trunk_dist = state["tree"]["dist"]
+        # Fail on hitting top or bottom.
+        if monkey_bot > screen_height:
+            res = ["Top Edge", trunk_dist]
+        elif monkey_top < 0:
+            res = ["Bot Edge", trunk_dist]
+        elif monkey_top >= trunk_top:
+            res = ["Top Tree", trunk_dist]
+        elif monkey_bot <= trunk_bot:
+            res = ["Bot Tree", trunk_dist]
+        return res
 
     def action_callback(self, state):
         ''''''
@@ -219,15 +237,16 @@ learner = Learner()
 reward = []
 score = []
 state = [] # state when fail
+result = []
 score_cur = 0
 ii = 0
 
 #for ii in xrange(iters):
 
-Qmat = np.load("Qmat.npy")
+Qmat = np.load("Qmat_manual.npy")
 learner.Q = Qmat
 
-while score_cur < 1000:
+while score_cur < 5000:
     ii += 1
     # Make a new monkey object.
     swing = SwingyMonkey(sound=False,            # Don't play sounds.
@@ -242,19 +261,23 @@ while score_cur < 1000:
     reward.append(learner.last_reward)
     score_cur = swing.get_state()["score"]
     veloc_cur = swing.get_state()["monkey"]["vel"]
+    result_cur = learner.result_callback()
     score.append(score_cur)
     state.append(swing.get_state())
+    result.append(result_cur)
 
-    if ii % 50 == 0:
-        np.save("Qmat.npy", learner.Q)
+    if ii>0 and ii % 50 == 0:
+        np.save("Qmat_backup.npy", learner.Q)
     '''
     print "################### Score = " + \
           str(swing.get_state()["score"]) + " ########################"
     '''
+    minii = np.max([0, ii-500])
     print "Iter " + str(ii) + ": Score: " + str(score_cur) + \
-          ",\tMean: " + str(round(np.mean(score[(ii-10):(ii-1)]), 3)) +\
+          ",\tMean: " + str(round(np.mean(score[minii:(ii-1)]), 3)) +\
+          ",\tResult: " + result_cur[0] + "\tDist: " + str(result_cur[1]) +\
           ",\tVel:" + str(veloc_cur)
     # Reset the state of the learner.
     learner.reset()
 
-    np.save("Qmat.npy", learner.Q)
+    np.save("Qmat_manual.npy", learner.Q)
