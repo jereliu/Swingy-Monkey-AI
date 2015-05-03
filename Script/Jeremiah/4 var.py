@@ -22,19 +22,19 @@ class Learner:
         self.learn = 0.5
 
         # initiate Q matrix
-        self.grid_x_len = 1
+        self.grid_x_len = 50
         self.grid_x_rgn = [-5, 10]
-        self.grid_y_len = 0.1
-        self.grid_y_rgn = [0, 1]
-        self.grid_p_len = 0.1
+#        self.grid_y_len = 50
+#        self.grid_y_rgn = [0, 1]
+        self.grid_p_len = 50
         self.grid_p_rgn = [-0.2, 1.2]
         self.grid_v_len = 6
-        self.grid_v_rgn = [-36, 12]
+        self.grid_v_rgn = [-24, 24]
 
         self.grid_x_num = \
             round(float(self.grid_x_rgn[1] - self.grid_x_rgn[0])/self.grid_x_len) + 2
-        self.grid_y_num = \
-            round(float(self.grid_y_rgn[1] - self.grid_y_rgn[0])/self.grid_y_len)
+#        self.grid_y_num = \
+#            round(float(self.grid_y_rgn[1] - self.grid_y_rgn[0])/self.grid_y_len)
         self.grid_p_num = \
             round(float(self.grid_p_rgn[1] - self.grid_p_rgn[0])/self.grid_p_len) + 2
         self.grid_v_num = \
@@ -59,16 +59,16 @@ class Learner:
         '''
         1.  Calculate state parameters
         '''
-        # state 1:  vertical position relative to "tree cave"
-        monkeyPos   = (state["monkey"]["top"] + state["monkey"]["bot"])/2
-        state_y     = float(monkeyPos)/400
+#        # state 1:  vertical position, monkey
+        monkeyPos   = float(state["monkey"]["top"] + state["monkey"]["bot"])/2
+#        state_y     = float(monkeyPos)
 
-        # state 2:  vertical position relative to "tree cave"
-        caveWidth   = state["tree"]["top"] - state["tree"]["bot"]
-        state_p     = float((monkeyPos - state["tree"]["bot"]))/caveWidth
+        # state 2:  vertical position, tree
+        treePos   = float(state["tree"]["top"] + state["tree"]["bot"])/2
+        state_p     = monkeyPos - treePos
 
         # state 3: horizontal position relative to "tree cave"
-        state_x     = float(state["tree"]["dist"])/speed
+        state_x     = float(state["tree"]["dist"])
 
         # state 4: vertical velocity
         state_v     = float(state["monkey"]["vel"])
@@ -93,7 +93,7 @@ class Learner:
 
         if state_v < self.grid_v_rgn[0]:
             idx_v = int(self.grid_v_num - 1)
-        elif state_v >= self.grid_p_rgn[1]:
+        elif state_v >= self.grid_v_rgn[1]:
             idx_v = int(self.grid_v_num - 2)
 
         return idx_x, idx_y, idx_p, idx_v
