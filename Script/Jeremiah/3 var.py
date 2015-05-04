@@ -17,17 +17,20 @@ class Learner:
         self.graviList = []
         self.impulList = []
 
+        self.state_grid = []
+        self.state_num = []
+
         # set discount/learning rate and epsilon
         self.disct = 0.9
         self.epsbase = 0.001
 
         # initiate Q matrix
-        self.grid_x_len = 50
+        self.grid_x_len = 25
         self.grid_x_rgn = [-50, 300]
-        self.grid_p_len = 50
+        self.grid_p_len = 25
         self.grid_p_rgn = [-250, 250]
-        self.grid_v_len = 20
-        self.grid_v_rgn = [-40, 40]
+        self.grid_v_len = 15
+        self.grid_v_rgn = [-45, 45]
 
         self.grid_x_num = \
             round(float(self.grid_x_rgn[1] - self.grid_x_rgn[0])/self.grid_x_len) + 2
@@ -48,6 +51,8 @@ class Learner:
         self.last_state  = None
         self.last_action = None
         self.last_reward = None
+        self.state_grid = []
+        self.state_num = []
 
 
     def state_index(self, state):
@@ -88,7 +93,7 @@ class Learner:
         elif state_v >= self.grid_v_rgn[1]:
             idx_v = int(self.grid_v_num - 1)
 
-        return idx_x, idx_p, idx_v
+        return idx_x, idx_p, idx_v, [state_x, state_p, state_v]
 
     def result_callback(self):
         state = self.last_state
@@ -114,7 +119,7 @@ class Learner:
         # random action if first time
         if self.last_state is None:
             new_action = (npr.rand() < 0.5)
-            idx_x_new, idx_p_new, idx_v_new = \
+            idx_x_new, idx_p_new, idx_v_new, stat_num_new = \
                 self.state_index(state)
 
         else:
@@ -159,9 +164,9 @@ class Learner:
             '''
             # 2. Identify state, determine learning rate, then update Q matrix
             '''
-            idx_x_old, idx_p_old, idx_v_old = \
+            idx_x_old, idx_p_old, idx_v_old, stat_num_old = \
                 self.state_index(self.last_state)
-            idx_x_new, idx_p_new, idx_v_new = \
+            idx_x_new, idx_p_new, idx_v_new, stat_num_new = \
                 self.state_index(state)
 
             '''
@@ -236,6 +241,10 @@ class Learner:
         self.last_action = new_action
         self.last_state  = state
 
+        self.state_grid.append([idx_x_new, idx_p_new, idx_v_new])
+        self.state_num.append(stat_num_new)
+
+
         """
         '''
         4. Random action Backup
@@ -259,23 +268,30 @@ class Learner:
 
 
 # formal learning step
-iters = 10000
-learner = Learner()
-reward = []
-score = []
-state = [] # state when fail
-result = []
-score_cur = 0
-ii = 0
+reset = False
 
-#for ii in xrange(iters):
+if reset is True:
+    # reset learning
+    iters = 10000
+    learner = Learner()
+    reward = []
+    score = []
+    Qnorm = []
 
-# learner.Q = np.load("Qmat_manual.npy")
-# learner.learnTime = np.load("Lmat_manual.npy")
+    state_grid = []
+    state_num = []
 
+    result = []
+    score_cur = 0
+    ii = 0
+
+    #for ii in xrange(iters):
+
+    # learner.Q = np.load("Qmat_manual.npy")
+    # learner.learnTime = np.load("Lmat_manual.npy")
 
 #while score_cur < 5000:
-while ii < 1e5:
+while ii < 1e6:
     ii += 1
     # Make a new monkey object.
     swing = SwingyMonkey(sound=False,            # Don't play sounds.
@@ -291,9 +307,13 @@ while ii < 1e5:
     score_cur = swing.get_state()["score"]
     veloc_cur = swing.get_state()["monkey"]["vel"]
     result_cur = learner.result_callback()
+    qnorm = np.linalg.norm(learner.Q)
     score.append(score_cur)
-    state.append(swing.get_state())
+    state_grid.append(learner.state_grid)
+    state_num.append(learner.state_num)
+
     result.append(result_cur)
+    Qnorm.append(qnorm)
 
     State = np.sum(learner.Q!=0)
     totalState = np.sum(learner.Q > -np.inf)
@@ -301,13 +321,14 @@ while ii < 1e5:
     if ii>0 and ii % 50 == 0:
         np.save("Qmat_backup.npy", learner.Q)
         np.save("Lmat_backup.npy", learner.learnTime)
+        np.save("chain_backup.npy", score)
 
     '''
     print "################### Score = " + \
           str(swing.get_state()["score"]) + " ########################"
     '''
-    #minii = np.max([0, ii-500])
-    minii = 0
+    minii = np.max([0, ii-500])
+    #minii = 0
     print "Iter " + str(ii) + ": Score: " + str(score_cur) + \
           ", Mean: " + str(round(np.mean(score[minii:(ii-1)]), 3)) +\
           ",\t(" + result_cur[0] + ":\tDist:" + str(result_cur[1]) +\
@@ -318,5 +339,4 @@ while ii < 1e5:
 
     np.save("Qmat_manual.npy", learner.Q)
     np.save("Lmat_manual.npy", learner.learnTime)
-
-    np.save("Chain_manual.npy", score)
+    np.save("chain_manual.npy", score)
