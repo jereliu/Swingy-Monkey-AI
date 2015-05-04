@@ -17,14 +17,15 @@ class Learner:
         self.graviList = []
         self.impulList = []
 
-        # set discount/learning rate and learning time
+        # set discount/learning rate and epsilon
         self.disct = 0.9
+        self.epsbase = 0.001
 
         # initiate Q matrix
         self.grid_x_len = 50
-        self.grid_x_rgn = [-50, 350]
+        self.grid_x_rgn = [-50, 300]
         self.grid_p_len = 50
-        self.grid_p_rgn = [-300, 300]
+        self.grid_p_rgn = [-250, 250]
         self.grid_v_len = 20
         self.grid_v_rgn = [-40, 40]
 
@@ -103,19 +104,21 @@ class Learner:
         elif monkey_top < 0:
             res = ["Bot Edge", trunk_dist]
         elif monkey_top >= trunk_top:
-            res = ["Top Tree", trunk_dist]
+            res = ["Top Tree", monkey_top - trunk_top]
         elif monkey_bot <= trunk_bot:
-            res = ["Bot Tree", trunk_dist]
+            res = ["Bot Tree", trunk_bot - monkey_bot]
         return res
 
     def action_callback(self, state):
         ''''''
+        # random action if first time
         if self.last_state is None:
             new_action = (npr.rand() < 0.5)
             idx_x_new, idx_p_new, idx_v_new = \
                 self.state_index(state)
 
         else:
+            """
             '''
             # 0. Running mean estimates of Gravity, Speed and Impulse
             '''
@@ -151,6 +154,7 @@ class Learner:
                     "\t" + str(state["tree"]["dist"]) +\
                   "\t" + str(state["tree"]["dist"]/speed)
             '''
+            """
 
             '''
             # 2. Identify state, determine learning rate, then update Q matrix
@@ -160,38 +164,61 @@ class Learner:
             idx_x_new, idx_p_new, idx_v_new = \
                 self.state_index(state)
 
-
+            '''
             # identify learning rate
             a_old = int(self.last_action)
             k_old = float(self.learnTime[idx_x_old, idx_p_old, idx_v_old, a_old])
             if k_old > 0:
                 learn = 1/k_old
             else:
-                learn = 1
+                #learn = 1
+                ValueError("k_old should be > 0!")
 
             # update state and learn time
             Q_old = self.Q[idx_x_old, idx_p_old, idx_v_old, a_old]
             R_new = self.last_reward
-            Q_max = np.max(self.Q[idx_x_new, idx_p_new, idx_v_new])
+            Q_max = np.max(self.Q[idx_x_new, idx_p_new, idx_v_new, :])
             Q_new = Q_old + learn * (R_new + self.disct * Q_max - Q_old)
 
             self.Q[idx_x_old, idx_p_old, idx_v_old, a_old] = Q_new
+            '''
+
+            max_Q = np.max(self.Q[idx_x_new,idx_p_new,idx_v_new, :])
+            ALPHA = 1/self.learnTime[idx_x_old,idx_p_old,idx_v_old, self.last_action]
+            self.Q[idx_x_old,idx_p_old,idx_v_old, self.last_action] += \
+            ALPHA*(self.last_reward+
+                   self.disct * max_Q -
+                   self.Q[idx_x_old,idx_p_old,idx_v_old, self.last_action])
 
             '''
             # 3. select optimal policy
             '''
+            new_action = 1 if \
+                self.Q[idx_x_new, idx_p_new, idx_v_new][1] > \
+                self.Q[idx_x_new, idx_p_new, idx_v_new][0] else 0
+            k = self.learnTime[idx_x_new, idx_p_new, idx_v_new, new_action]
+            # epsilon-greedy
+            if k > 0:
+                eps = self.epsbase/k
+            else:
+                eps = self.epsbase
+            if (npr.rand() < eps):
+                new_action = (npr.rand() < 0.5)
+
+            '''
             # epsilon greedy
-            k = np.sum(self.learnTime[idx_x_new, idx_p_new, idx_v_new])
-            if k == 0:
+            opt_action_num = \
+                np.argmax(self.Q[idx_x_new, idx_p_new, idx_v_new, :])
+            opt_action = bool(opt_action_num)
+
+            k = self.learnTime[idx_x_new, idx_p_new, idx_v_new, opt_action_num]
+            if k == 0 or (npr.rand() < self.epsbase/k):
                 #random action if haven't learned this state before
                 new_action = (npr.rand() < 0.5)
             else:
-                decision_epsilon = \
-                    np.argmax(npr.multinomial(1, [1 - 1.0 / (2 * k), 1.0 / (2 * k)]))
-                decision_optimal = \
-                    np.argmax(self.Q[idx_x_new, idx_p_new, idx_v_new])
-                new_action_num = np.abs(decision_epsilon - decision_optimal)
-                new_action = bool(new_action_num)
+                new_action = opt_action
+            '''
+
             '''
             if new_action is True:
                 print "(" + str(int(idx_x_new)) + "\t" + \
@@ -243,8 +270,9 @@ ii = 0
 
 #for ii in xrange(iters):
 
-Qmat = np.load("Qmat_manual.npy")
-learner.Q = Qmat
+# learner.Q = np.load("Qmat_manual.npy")
+# learner.learnTime = np.load("Lmat_manual.npy")
+
 
 while score_cur < 5000:
     ii += 1
@@ -266,18 +294,26 @@ while score_cur < 5000:
     state.append(swing.get_state())
     result.append(result_cur)
 
+    State = np.sum(learner.Q!=0)
+    totalState = np.sum(learner.Q > -np.inf)
+
     if ii>0 and ii % 50 == 0:
         np.save("Qmat_backup.npy", learner.Q)
+        np.save("Lmat_backup.npy", learner.learnTime)
+
     '''
     print "################### Score = " + \
           str(swing.get_state()["score"]) + " ########################"
     '''
     minii = np.max([0, ii-500])
     print "Iter " + str(ii) + ": Score: " + str(score_cur) + \
-          ",\tMean: " + str(round(np.mean(score[minii:(ii-1)]), 3)) +\
-          ",\tResult: " + result_cur[0] + "\tDist: " + str(result_cur[1]) +\
-          ",\tVel:" + str(veloc_cur)
+          ", Mean: " + str(round(np.mean(score[minii:(ii-1)]), 3)) +\
+          ",\t(" + result_cur[0] + ":\tDist:" + str(result_cur[1]) +\
+          ", Vel:" + str(veloc_cur) +\
+          ")\t" + str(State) + "/" + str(totalState)
     # Reset the state of the learner.
     learner.reset()
 
     np.save("Qmat_manual.npy", learner.Q)
+    np.save("Lmat_manual.npy", learner.learnTime)
+

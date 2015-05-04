@@ -129,7 +129,7 @@ class SwingyMonkey:
         '''
 
         # Render the background.
-        self.screen.blit(self.background_img, (self.iter,0))
+        self.screen.blit(self.background_img, (self.iter, 0))
         if self.iter < self.background_img.get_width() - self.screen_width:
             self.screen.blit(self.background_img, (self.iter+self.background_img.get_width(),0))
 
