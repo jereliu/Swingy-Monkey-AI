@@ -274,7 +274,8 @@ ii = 0
 # learner.learnTime = np.load("Lmat_manual.npy")
 
 
-while score_cur < 5000:
+#while score_cur < 5000:
+while ii < 1e5:
     ii += 1
     # Make a new monkey object.
     swing = SwingyMonkey(sound=False,            # Don't play sounds.
@@ -305,7 +306,8 @@ while score_cur < 5000:
     print "################### Score = " + \
           str(swing.get_state()["score"]) + " ########################"
     '''
-    minii = np.max([0, ii-500])
+    #minii = np.max([0, ii-500])
+    minii = 0
     print "Iter " + str(ii) + ": Score: " + str(score_cur) + \
           ", Mean: " + str(round(np.mean(score[minii:(ii-1)]), 3)) +\
           ",\t(" + result_cur[0] + ":\tDist:" + str(result_cur[1]) +\
@@ -317,3 +319,4 @@ while score_cur < 5000:
     np.save("Qmat_manual.npy", learner.Q)
     np.save("Lmat_manual.npy", learner.learnTime)
 
+    np.save("Chain_manual.npy", score)
