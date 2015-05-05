@@ -3,6 +3,9 @@ import numpy as np
 import numpy.random as npr
 import sys
 
+from ggplot import *
+import pandas as pd
+
 from SwingyMonkey import SwingyMonkey
 
 class Learner:
@@ -322,6 +325,8 @@ while ii < 1e6:
         np.save("Qmat_backup.npy", learner.Q)
         np.save("Lmat_backup.npy", learner.learnTime)
         np.save("chain_backup.npy", score)
+        np.savetxt("state_grid.txt", state_grid)
+        np.savetxt("state_num.txt", state_num)
 
     '''
     print "################### Score = " + \
@@ -339,4 +344,22 @@ while ii < 1e6:
 
     np.save("Qmat_manual.npy", learner.Q)
     np.save("Lmat_manual.npy", learner.learnTime)
-    np.save("chain_manual.npy", score)
+
+    np.save("state_grid_manual.npy", state_grid)
+    np.save("state_num_manual.npy", state_num)
+
+
+
+'''
+# Analysis
+'''
+
+state_num_np = np.array([np.array(item) for item in state_num])
+state_num_np = np.vstack(state_num_np)
+
+state_x_rec, state_p_rec, state_v_rec = state_num_np.T
+
+= pd.DataFrame()
+
+
+
