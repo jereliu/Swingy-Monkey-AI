@@ -61,9 +61,11 @@ class SwingyMonkey:
             print "No sound."
             self.sound = False
 
+
         # Set up the screen for rendering.
         self.screen = \
             pg.display.set_mode((self.screen_width, self.screen_height), 0, 32)
+
 
         # Load external resources.
         self.background_img = pg.image.load('res/jungle-pixel.png').convert()
@@ -128,10 +130,12 @@ class SwingyMonkey:
         screen.  It calls the action and reward callbacks.
         '''
 
+
         # Render the background.
         self.screen.blit(self.background_img, (self.iter, 0))
         if self.iter < self.background_img.get_width() - self.screen_width:
             self.screen.blit(self.background_img, (self.iter+self.background_img.get_width(),0))
+
 
         # Perhaps generate a new tree.
         if self.next_tree <= 0:
@@ -183,7 +187,7 @@ class SwingyMonkey:
                 self.screen.blit(self.background_img, (tree['x'], tree['y']),
                                  (tree['x']-(self.iter+self.background_img.get_width()), tree['y'],
                                   self.tree_img.get_width(), self.tree_gap))
-                
+
             trunk_left  = tree['x'] + 215
             trunk_right = tree['x'] + 290
             trunk_top   = tree['y']
@@ -205,12 +209,14 @@ class SwingyMonkey:
                 if self.sound:
                     self.blop_snd.play()
 
+
         # Monkey swings down on a vine.
         if self.vel < 0:
             pg.draw.line(self.screen, (92,64,51), (self.screen_width/2+20, self.monkey_loc-25), (self.hook,0), 4)
 
         # Render the monkey.
         self.screen.blit(self.monkey_img, (self.monkey_left, monkey_top))
+
 
         # Fail on hitting top or bottom.
         if monkey_bot > self.screen_height or monkey_top < 0:
@@ -227,6 +233,7 @@ class SwingyMonkey:
 
         # Render the display.
         pg.display.update()
+
 
         # If failed, play sound and exit.  Also, assign rewards.
         if edge_hit:
