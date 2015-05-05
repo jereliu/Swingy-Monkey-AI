@@ -144,28 +144,30 @@ We can then choose a high-dimension feature space. For the below example, nine f
 $$\boldsymbol{\Phi} = \big[\Delta x,\Delta y,\Delta z, \Delta x^2,\Delta y^2,\Delta z^2,\Delta x^3,\Delta y^3,\Delta z^3 \big]$$ 
 $$k(x,z) = \boldsymbol{\Phi}^T\boldsymbol{\Phi}$$
 \subsubsection{Model-based estimation}
-\textbf{A. States}
-There are states for the control of the monkey:
+\textbf{ Optimization Algorithm}\\
+Value iteration could be implemented in order to find the value function for small MDPs. The value iteration is illustrated as follows:\\
 
-\textbf{B. Action}
-\textbf{C. Rewards}
-\textbf{D. State Transition}
-\textbf{E. Optimization Algorithm}
-Value iteration could be implemented in order to find the value function for small MDPs. The value iteration is illustrated as follows:
-For each state, initialize $V(s):=0$
-Repeat until converge
-{For each state:
+For each state, initialize $V(s):=0$.\\
+Repeat until converge\\
+$\{$For each state:
 $$V(s) = R(s) + \max\limits_{a\in A}\gamma\sum_{s'}P(s'|s,a)V(s')$$
+$\}$\\
+
+After $V(s)$ and $P_{sa}$ were learnt by the above algorithm, the optimal $a$ is given by:
+$$a^* = \max\limits_{a\in A}P(s'|s,a)V(s)$$
 \subsubsection{Q-learning}
 \subsubsection{exploitation vs. exploration}
+$e = 0.001$
 
+$\epsilon = \frac{e}{k}$
 
-
+$k$ = \# of actions taken from state s
 
 \subsection{\textbf{Numerical Challenges \& Further Modification}}
 
 \subsubsection{Parameter Selection}
-
+why $\gamma = 0.95$
+$\alpha = 1/k$
 \newpage
 \section{\textbf{Discussion \& Possible Directions}}
 
