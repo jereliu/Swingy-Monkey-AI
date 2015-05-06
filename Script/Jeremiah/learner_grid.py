@@ -24,19 +24,15 @@ class Learner:
 
         # set discount/learning rate and epsilon
         self.disct = 0.9
-<<<<<<< HEAD
-        self.epsbase = 0.1
-=======
         self.epsbase = 0.001
->>>>>>> origin/master
 
         # initiate Q matrix
-        self.grid_x_len = 50
-        self.grid_x_rgn = [-50, 350]
-        self.grid_p_len = 50
-        self.grid_p_rgn = [-250, 250]
-        self.grid_v_len = 20
-        self.grid_v_rgn = [-40, 40]
+        self.grid_x_len = 25
+        self.grid_x_rgn = [-100, 400]
+        self.grid_p_len = 10
+        self.grid_p_rgn = [-200, 200]
+        self.grid_v_len = 5
+        self.grid_v_rgn = [-40, 20]
 
         self.grid_v = [-22.0, -15.0, -11.0, -7.0, -4.0,
                        -1.0, 2.0, 6.0, 9.0, 13.0]

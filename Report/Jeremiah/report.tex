@@ -165,6 +165,7 @@ R: \quad
 
 where $\big[ \mbox{{\tt pass\_tree}}, \; \mbox{{\tt hit\_trunk}}, \; \mbox{{\tt hit\_edge}} \big]$ are unknown boolean functions of $s\in \Ssc$.
 
+\newpage
 \section{\textbf{Method}}
 
 \subsection{\textbf{Rationale on Model Choice}}
@@ -180,19 +181,51 @@ In the previous section we identified below characteristics of the task at hand:
 $E \Big( \sum_{s \in \bp} R(s, \pi(s)) \Big| \bp \Big)$ the expected number of total reward in each play.
 \end{enumerate}
 
-If we are willing to assume Markovian property for the process $\{s_t\}$, i.e. $P(s_{t+1} \big| \{s_i\}_{i=0}^{t}, \{a_i\}_{i=1}^{t}) = P(s_{t+1} \big| s_t, a_t) $. The availabile information listed in $(1)$ put us into a Reinforcement Learning setting.
+If we are willing to assume Markovian property for the process $\{s_t\}$, i.e. $P(s_{t+1} \big| \{s_i\}_{i=0}^{t}, \{a_i\}_{i=1}^{t}) = P(s_{t+1} \big| s_t, a_t) $, such that the transition information can be described by a transition matrix $\bP$, the availabile information listed in $(1)$ put us into a Reinforcement Learning setting. Furthemore, based on information from $(2)$, we are relunctant to deploy model-based approach due to the lareg $\Ssc \times \Asc$ space. More specifically, since the model-based approach requires reasonably accurate estimation of $\bP$ (a $|\Ssc| \times |\Ssc| \times 2$ matrix), we need to visit each nontrivial position of $\bP$  sufficiently often in order to achieve reliable $\hat{P}(s'|s, a)$ estimates. Such computation, even after the discreting of the state space, is intractable in terms of both complexity and storage. Although the estimation of $\bP$ and $\bQ$ can be simplified by assuming $P(s'|s, a) = f(s', s, a)$ and $Q(s, a) = g(s, a)$ and model $f(.), g(.)$ using flexible, kernel-based methods, we decided not to add this extra layer of complexity in order to avoid skewed $\bP$ and $\bQ$ estimates due to wrong functional assumption.
 
-\subsubsection{Dimension selection and Discretization}
-markov assumption
+Based on above consideration, we focused on Q-learning in our implementation, where the estimation task is greatly simplified by considering only the $\bQ$ matrix. Specifically, by expanding the Bellman equations, we have: 
+\begin{align*}
+Q(s,a) &= R(s,a)+\gamma\sum P(s'|s,a) max_{a'\in A}Q(s',a')\\
+&= R(s,a)+\gamma E_{s'}[max_{a'\in A}Q(s',a')]\\
+&=E_{s'}[R(s,a)+\gamma max_{a'\in A}Q(s',a')]
+\end{align*}
+and estimation may proceed through Stochastic Gradient Descent/Temporal Difference Learning, where $\hat{Q}_{\mbox{target}} = r_{s, a}^{obs} +\gamma max_{a'\in A}Q^{old}(s',a')$. We thus have below updating algorithm:
+$$Q(s,a)^{new} \leftarrow 
+Q(s,a)^{old} + \alpha [r + \gamma  max_a' Q(s',a')^{old} - Q(s,a)^{old} ]$$
+
+where $\gamma \in (0, 1)$ denotes the discount factor, and $\alpha \in (0, 1)$ denotes the learning rate.
+
+\subsubsection{\textbf{Representing $\Ssc$ in low-dimension space}}
+
+Due to the continous and high-dimensional nature of original $\Ssc$, it is essential to identify $\Ssc_p$ a minimal-information-loss projection of $\Ssc$ in discrete, lower dimensional space. Specifically, we impose below criteria for our projection $s_p \in \Ssc_p$:
+\begin{enumerate}
+\item $\Ssc_p$ contains maximal possible information from $\Ssc$ for the purpose of optimizing $\bQ$, \\ i.e. $\inf |Q(s, a) - \hat{Q}(s_p, a)| < \epsilon$
+\item $\Ssc_p$ reasonably satisfies markov assumption, i.e. $P(s_{p,t+1}|s_{p,t}, a_{t}) = P(s_{p, t+1}| \{s_{p, i}\}_{i=1}^t, \{a_{p, i}\}_{i=1}^t )$
+\end{enumerate}
+
+Although above criteria are difficult to verify theoretically, they did provide some intuitive guidance in terms of selecting minimal-information-reduction transformation of $\Ssc$.  
 
 
 
-\subsubsection{Exploration/Exploitation Parameters}
 
+\subsubsection{\textbf{Exploration/Exploitation Parameters}}
+The learning rate $\alpha$ determining how much of an effect the new sample has on the current estimate. If $\alpha$ is large, we will adjust quickly but may not converge. What we did is to decrease $\alpha$ gradually as the number of samples of $Q(s,a)$ increases.
 
 Learning rate
 
 $\epsilon$-greedy
+
+{\color{red}
+\subsection{\textbf{Exploration vs Exploitation}}
+The monkey has to determine what action to take even while it is learning. It receives rewards and punishments even as it is learning. The monkey has to spend time to learn the pipes, but we will expect the monkey to start being productive before the monkey has learned everything there is to know about the pipe. The monkey needs to decide what to do considering both the effect of its action on its immediate rewards and future state, and the need to learn for the future. This issue is known as the exploration-exploitation tradeoff. Q-learning has the following two theoretical properties:
+\begin{enumerate}
+	\item [i] If every state-action pair(s,a) is visited an unbounded number of times and the learning rate $\alpha$ is "eventually small enough" then the Q-values converge to the limit.
+	\item [ii] If we exploit the Q-values in the limit, then the policy converges to the optimal policy in the limit.
+\end{enumerate}
+In order to achieve these two requirements, we define the distinct learning rate for each state/action pair and have that rate be $\alpha_k(s,a)=1/k$ where k is the number of times action $\alpha$ has been taken from state s. We adopt the $"\varepsilon-greedy"$ policy that the optimal action is taken with probability $1-\varepsilon$, but with probability $\varepsilon$, a uniformly random action is taken to induce exploration.We took $\varepsilon=1/t$, where t is the number of time periods that the monkey has experience.
+}
+
+
 
 \subsection{\textbf{Performance Evaluation}}
 
