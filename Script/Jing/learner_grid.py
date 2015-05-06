@@ -27,9 +27,9 @@ class Learner:
         self.epsbase = 0.1
 
         # initiate Q matrix
-        self.grid_x_len = 50
+        self.grid_x_len = 25
         self.grid_x_rgn = [-50, 350]
-        self.grid_p_len = 50
+        self.grid_p_len = 25
         self.grid_p_rgn = [-250, 250]
         self.grid_v_len = 20
         self.grid_v_rgn = [-40, 40]
@@ -273,7 +273,7 @@ class Learner:
 
 
 # formal learning step
-reset = False
+reset = True
 
 if reset is True:
     # reset learning
@@ -296,7 +296,7 @@ if reset is True:
     # learner.learnTime = np.load("Lmat_manual.npy")
 
 #while score_cur < 5000:
-while ii < 10000:
+while ii < 5000:
     ii += 1
     # Make a new monkey object.
     swing = SwingyMonkey(sound=False,            # Don't play sounds.
@@ -346,9 +346,10 @@ while ii < 10000:
     learner.reset()
 
 
-np.save(data_dir + "/data/last/Qmat_manual.npy", learner.Q)
-np.save(data_dir + "/data/last/Lmat_manual.npy", learner.learnTime)
-np.save(data_dir + "/data/last/chain_manual.npy", score)
+np.save(data_dir + "last/Qmat_manual.npy", learner.Q)
+np.save(data_dir + "last/Lmat_manual.npy", learner.learnTime)
+np.save(data_dir + "last/chain_manual.npy", score)
 
-np.save(data_dir + "/data/last/state_grid_manual.npy", state_grid)
-np.save(data_dir + "/data/last/state_num_manual.npy", state_num)
+np.save(data_dir + "last/state_grid_manual.npy", state_grid)
+np.save(data_dir + "last/state_num_manual.npy", state_num)
+

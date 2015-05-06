@@ -170,15 +170,46 @@ why $\gamma = 0.95$
 $\alpha = 1/k$
 \newpage
 \section{\textbf{Discussion \& Possible Directions}}
+\subsection{Locally Weighted Regression}
+One method has effectively dealt with practical situations with large state spaces is locally weighted regression (LWR). It improves the performance of a discrete-state algorithm by applying a function approximator to a continuous-state problem. The method consists of two steps. The first one involves learning the value function over a small number of discrete states. The second step consists focusing the function approximator to generalize from the discrete states to a continuous state space, thereby effectively using previously discarded state information.\\
+
+LWR creates a local model of a function around a query point. Training points are weighted according to a function of their distance from the query point, and this function is typically a kernel function. The below algorithm describes how LWR techniques construct a value function approximation. First, we obtain approximations for the current Q-value, and the maximum value from the resulting state, $s'$. We keep track of the points used in the LWR prediction of $q$ for later and their associated weights. Then the new approximation of $Q(s,a)$ is calculated  using the standard Q-learning update rule. This value is then used as a normal supervised training point for the LWR subsystem. We then update each of the points in $K$, bringing this value closer to $Q(s,a)$ depending its proximity to $(s,a)$, as measured its kernel weights, $\xi_i$. \\
+\\
+\textbf{Input}:\\
+Experience, $(s,a,r,s')$\\
+Learning rate, $\alpha$\\
+Discount factor, $\gamma$\\
+LWR bandwith, $h$\\
+1. $q \leftarrow Q_{predict}(s,a)$\\
+2. $q_{next} \leftarrow max_a' Q_{predict}(s',a')$\\
+3. $K \leftarrow$ set used in calculation of $q$\\
+4. $\xi_i \leftarrow exp(-(q-k_i)^2/h^2)$\\
+5. $q_{new} \leftarrow q+\alpha(r+\gamma q_{next} - q)$\\
+6. Lean $Q(s,a)\leftarrow q_{new}$\\
+7. \textbf{for} each point, $(s_i, a_i)$ in $K$ do\\
+8. $Q(s_i, a_i) \leftarrow Q(s_i, a_i) + \xi_i(q_{new} - Q(s_i, a_i))$\\
+
+LWR is an aggressive learning algorithm that is fast to train. It can make reasonable predictions based on very little training data. Only simple linear functions are required to approximate the global function in the neighborhoold of the query point, which avoids the difficult task of generating a global model of a nonlinear function. In addition, since LWR retains all of the training data, the approximation could be reevaluated on the original training points.
+ 
+\subsection{Neural Network}
+To deal with the large state space, besides discretizing the position space into bins and locally weighted regression, another strategy is implementing function approximation, such as a neural network. $\hat{Q}_\theta(s,a)$ could be represented by a non-linear approximator. The steps are illustrated as below:\\
+\\a. Start with initial parameter values: $\theta$.\\
+  b. Take action according to an exploit/explore policy, so that the results should converge to greedy policy.\\
+  c. Perform TD update for each parameter:
+  $$\theta_i = \theta_i + \alpha(R(s) + \beta\max\limits_{a'}\hat{Q}_\theta(s', a')-\hat{Q}_\theta(s, a)) \dfrac{\partial {\hat{Q}_\theta(s, a)}}{\partial{\theta_i}}$$\\
+  d. Repeat step b and c until convergence.\\
+  
+Q-learning with nonlinear approximators often works well in practice. Typically the space has many local minima and convergence is not guaranteed. 
+ 
 
 
 \newpage
 \section*{\textbf{Reference}}
 \begin{enumerate}
 \item \label{ref:handbook}
-Ricci F, Rokach L, Shapira B et al. (2010) \textbf{Recommender Systems Handbook}. \textit{Springer}. 
+Moerman W, Bakker B, Wiering M. (2009) \textbf{Hierarchical Assignment of Behaviours to Subpolicies}. \textit{Cognitive Artificial Intelligence, Utrecht University}. 
 \item \label{ref:MFieee}
-Koren Y, Bell R, Volinsky C. (2009) \textbf{Matrix factorization techniques for recommender systems}. \textit{IEEE Computer} Aug 2009, 42-49. 
+Aljibury H. (2001) \textbf{Improving the Performance of Q-learning with Locally Weighted Regression}. \textit{Electrical Engineering, University of Florida}. 
 \item \label{ref:WLA}
 Srebro N,  Jaakkola T.(2003) \textbf{Weighted low-rank approximations}. \textit{Proceedings of the Twentieth International Conference} 720–727.
 \item \label{ref:PMF}
