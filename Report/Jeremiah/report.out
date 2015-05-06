@@ -1,9 +1,10 @@
 \BOOKMARK [1][-]{section.1}{Problem Description}{}% 1
 \BOOKMARK [1][-]{section.2}{Method}{}% 2
 \BOOKMARK [2][-]{subsection.2.1}{Rationale on Model Choice}{section.2}% 3
-\BOOKMARK [3][-]{subsubsection.2.1.1}{State Reduction and Discretization}{subsection.2.1}% 4
+\BOOKMARK [3][-]{subsubsection.2.1.1}{Dimension selection and Discretization}{subsection.2.1}% 4
 \BOOKMARK [3][-]{subsubsection.2.1.2}{Exploration/Exploitation Parameters}{subsection.2.1}% 5
-\BOOKMARK [1][-]{section.3}{Result}{}% 6
-\BOOKMARK [2][-]{subsection.3.1}{State Exploration}{section.3}% 7
-\BOOKMARK [2][-]{subsection.3.2}{Convergence Behavior}{section.3}% 8
-\BOOKMARK [1][-]{section.4}{Discussion \046 Possible Directions}{}% 9
+\BOOKMARK [2][-]{subsection.2.2}{Performance Evaluation}{section.2}% 6
+\BOOKMARK [1][-]{section.3}{Result}{}% 7
+\BOOKMARK [2][-]{subsection.3.1}{State Exploration}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.2}{Convergence Behavior}{section.3}% 9
+\BOOKMARK [1][-]{section.4}{Discussion \046 Possible Directions}{}% 10
