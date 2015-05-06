@@ -32,6 +32,7 @@
 
 %declare argmin
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
 
 %declare checkmark
 \usepackage{pifont}% http://ctan.org/pkg/pifont
@@ -126,6 +127,16 @@ keywordstyle=\ttfamily} %R-related formatting
 
 
 \section{\textbf{Problem Description}}
+
+Set in a \textit{Flappy Bird}-type game \textit{Swingy Monkey}, our current learning goal is to estimate an optimal policy $\pi: \Ssc \rightarrow \Asc$ such that the expectation of reward function $f: \Ssc \times \Asc \rightarrow \Rsc$ is maximized, i.e. we aim to identify a $\pi^*$ such that
+
+\begin{align*}
+\pi^* = arg\max_\pi E \Big( f(s, \pi(s)) | s \Big)
+\end{align*}
+
+
+
+
 State Space
 Action Space
 

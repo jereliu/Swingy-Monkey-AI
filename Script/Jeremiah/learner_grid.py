@@ -352,4 +352,3 @@ np.save(data_dir + "/data/last/chain_manual.npy", score)
 
 np.save(data_dir + "/data/last/state_grid_manual.npy", state_grid)
 np.save(data_dir + "/data/last/state_num_manual.npy", state_num)
-
