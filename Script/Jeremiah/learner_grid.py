@@ -24,7 +24,11 @@ class Learner:
 
         # set discount/learning rate and epsilon
         self.disct = 0.9
+<<<<<<< HEAD
         self.epsbase = 0.1
+=======
+        self.epsbase = 0.001
+>>>>>>> origin/master
 
         # initiate Q matrix
         self.grid_x_len = 50
@@ -273,7 +277,7 @@ class Learner:
 
 
 # formal learning step
-reset = False
+reset = True
 
 if reset is True:
     # reset learning
@@ -296,7 +300,7 @@ if reset is True:
     # learner.learnTime = np.load("Lmat_manual.npy")
 
 #while score_cur < 5000:
-while ii < 10000:
+while ii < 5000:
     ii += 1
     # Make a new monkey object.
     swing = SwingyMonkey(sound=False,            # Don't play sounds.

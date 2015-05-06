@@ -128,33 +128,74 @@ keywordstyle=\ttfamily} %R-related formatting
 
 \section{\textbf{Problem Description}}
 
-Set in a \textit{Flappy Bird}-type game \textit{Swingy Monkey}, our current learning goal is to estimate an optimal policy $\pi: \Ssc \rightarrow \Asc$ such that the expectation of reward function $f: \Ssc \times \Asc \rightarrow \Rsc$ is maximized, i.e. we aim to identify a $\pi^*$ such that
+Set in a \textit{Flappy Bird}-type game \textit{Swingy Monkey}, our current learning task is to estimate the optimal policy function $\pi: \Ssc \rightarrow \Asc$ such that the expectation of reward function $R: \Ssc \times \Asc \rightarrow \Rsc$ is maximized, i.e. if define a stochastic process of game state $\{s_t\}$ with unknown transition probability $P(s_{t+1} \big| s_1, \dots, s_t, a_1, \dots, a_t)$, we aim to identify a $\pi^*$ such that
 
 \begin{align*}
-\pi^* = arg\max_\pi E \Big( f(s, \pi(s)) | s \Big)
+\pi^* = arg\max_\pi E \Big( \sum_{s \in \bp} R(s, \pi(s)) \Big| \bp \Big)
 \end{align*}
 
+where $\bp$ a sample path of $\{S_t\}$.\\
 
+In current setting, the state and action spaces are defined as:
+\begin{align*}
+\Ssc & =
+\begin{bmatrix}
+Tree_{\mbox{dist}} & Tree_{\mbox{top}} & Tree_{\mbox{bot}} &
+Monkey_{\mbox{vel}} & Monkey_{\mbox{top}} & Monkey_{\mbox{bot}}
+\end{bmatrix} \subset \mathbb{R}^6\\
+\Asc & = \begin{bmatrix} No Jump & Jump \end{bmatrix}
+\end{align*}
+Note theta $\big[ 
+Monkey_{\mbox{top}}, Monkey_{\mbox{bot}}, Tree_{\mbox{top}}, Tree_{\mbox{bot}}  \big]$ are in fact bounded by screen size (600 pxls).\\
 
+The reward function can be partially described as:
+\begin{align*}
+R: \quad
+\begin{bmatrix}
+\mbox{{\tt pass\_tree}} \\
+\mbox{{\tt hit\_trunk}} \\
+\mbox{{\tt hit\_edge}} \\
+\mbox{{\tt otherwise}} \\
+\end{bmatrix}
+\rightarrow
+\begin{bmatrix}
+1 \\ -5 \\ -10 \\ 0
+\end{bmatrix}
+\end{align*}
 
-State Space
-Action Space
-
-
-Empirical Goal: Score
-Reward
+where $\big[ \mbox{{\tt pass\_tree}}, \; \mbox{{\tt hit\_trunk}}, \; \mbox{{\tt hit\_edge}} \big]$ are unknown boolean functions of $s\in \Ssc$.
 
 \section{\textbf{Method}}
 
 \subsection{\textbf{Rationale on Model Choice}}
+In the previous section we identified below characteristics of the task at hand:
+\begin{enumerate}
+\item [(1)] Available Information:
+\begin{enumerate}
+\item Known $\Ssc$, $\Asc$ spaces. 
+\item Unknown transition probability $P(s_{t+1} \big| \{s_i\}_{i=0}^{t}, \{a_i\}_{i=1}^{t})$ and unknown reward function $R: \Ssc \times \Asc \rightarrow \Rsc$
+\end{enumerate}
+\item [(2)] $|\Asc| = 2$, while $\Ssc \subset \mathbb{R}^6$ is continous with $|\Ssc| = \infty$. 
+\item [(3)] Outcome metric: 
+$E \Big( \sum_{s \in \bp} R(s, \pi(s)) \Big| \bp \Big)$ the expected number of total reward in each play.
+\end{enumerate}
 
-\subsubsection{State Reduction and Discretization}
+If we are willing to assume Markovian property for the process $\{s_t\}$, i.e. $P(s_{t+1} \big| \{s_i\}_{i=0}^{t}, \{a_i\}_{i=1}^{t}) = P(s_{t+1} \big| s_t, a_t) $. The availabile information listed in $(1)$ put us into a Reinforcement Learning setting.
+
+\subsubsection{Dimension selection and Discretization}
+markov assumption
+
+
 
 \subsubsection{Exploration/Exploitation Parameters}
+
 
 Learning rate
 
 $\epsilon$-greedy
+
+\subsection{\textbf{Performance Evaluation}}
+
 
 \section{\textbf{Result}}
 
