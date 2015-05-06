@@ -3,7 +3,7 @@ import numpy.random as npr
 import os
 import sys
 
-from SwingyMonkey2 import SwingyMonkey
+from SwingyMonkey import SwingyMonkey
 
 data_dir = "../../../Practical 4 Data/"
 
@@ -27,15 +27,13 @@ class Learner:
         self.epsbase = 0.001
 
         # initiate Q matrix
-        self.grid_x_len = 25
-        self.grid_x_rgn = [-100, 350]
-        self.grid_p_len = 25
+        self.grid_x_len = 50
+        self.grid_x_rgn = [-100, 450]
+        self.grid_p_len = 50
         self.grid_p_rgn = [-300, 300]
         self.grid_v_len = 20
         self.grid_v_rgn = [-40, 40]
 
-        self.grid_v = [-22.0, -15.0, -11.0, -7.0, -4.0,
-                       -1.0, 2.0, 6.0, 9.0, 13.0]
 
         self.grid_x_num = \
             round(float(self.grid_x_rgn[1] - self.grid_x_rgn[0])/self.grid_x_len) + 2
@@ -273,7 +271,7 @@ class Learner:
 
 
 # formal learning step
-reset = False
+reset = True
 
 if reset is True:
     # reset learning
@@ -336,7 +334,7 @@ while ii < 1e5:
     '''
     minii = np.max([0, ii-1000])
     #minii = 0
-    if ii % 100 == 0:
+    if ii % 10 == 0:
         print "Iter " + str(ii) + ": Score: " + str(score_cur) + \
               ", Mean: " + str(round(np.mean(score[minii:(ii-1)]), 3)) +\
               ",\t(" + result_cur[0] + ":\tDist:" + str(result_cur[1]) +\
