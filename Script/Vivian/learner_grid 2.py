@@ -24,7 +24,7 @@ class Learner:
 
         # set discount/learning rate and epsilon
         self.disct = 0.9
-        self.epsbase = 0.01
+        self.epsbase = 0.001
 
         # initiate Q matrix
         self.grid_x_len = 25
@@ -324,11 +324,12 @@ while ii < 3000:
     totalState = np.sum(learner.Q > -np.inf)
 
     if ii>0 and ii % 50 == 0:
-        np.save(data_dir + "Qmat_backup.npy", learner.Q)
-        np.save(data_dir + "Lmat_backup.npy", learner.learnTime)
-        np.save(data_dir + "chain_backup.npy", score)
-        np.save(data_dir + "state_grid_backup.npy", state_grid)
-        np.save(data_dir + "state_num_backup.npy", state_num)
+        np.save(data_dir + "Qmat_backup1.npy", learner.Q)
+        np.save(data_dir + "Lmat_backup1.npy", learner.learnTime)
+        np.save(data_dir + "chain_backup1.npy", score)
+        np.save(data_dir + "state_grid_backup1.npy", state_grid)
+        np.save(data_dir + "state_num_backup1.npy", state_num)
+
 
     '''
     print "################### Score = " + \
@@ -344,15 +345,14 @@ while ii < 3000:
               ")\t" + str(State) + "/" + str(totalState)
     # Reset the state of the learner.
     learner.reset()
-
 # save result
 print "############################################################################"
 print "Saving results...."
-np.save(data_dir + "last/Qmat_manual.npy", learner.Q)
-np.save(data_dir + "last/Lmat_manual.npy", learner.learnTime)
-np.save(data_dir + "last/chain_manual.npy", score)
+np.save(data_dir + "last/Qmat_manual1.npy", learner.Q)
+np.save(data_dir + "last/Lmat_manual1.npy", learner.learnTime)
+np.save(data_dir + "last/chain_manual1.npy", score)
 
-np.save(data_dir + "last/state_grid_manual.npy", state_grid)
-np.save(data_dir + "last/state_num_manual.npy", state_num)
+np.save(data_dir + "last/state_grid_manual1.npy", state_grid)
+np.save(data_dir + "last/state_num_manual1.npy", state_num)
 print "Finished! Remember to copy from '/last/' to corresponding folder"
 print "############################################################################"

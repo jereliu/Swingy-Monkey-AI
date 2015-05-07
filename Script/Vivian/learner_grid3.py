@@ -27,9 +27,9 @@ class Learner:
         self.epsbase = 0.01
 
         # initiate Q matrix
-        self.grid_x_len = 25
+        self.grid_x_len = 50
         self.grid_x_rgn = [-50, 350]
-        self.grid_p_len = 25 
+        self.grid_p_len = 50 
         self.grid_p_rgn = [-250, 250]
         self.grid_v_len = 20
         self.grid_v_rgn = [-40, 40]
@@ -324,11 +324,12 @@ while ii < 3000:
     totalState = np.sum(learner.Q > -np.inf)
 
     if ii>0 and ii % 50 == 0:
-        np.save(data_dir + "Qmat_backup.npy", learner.Q)
-        np.save(data_dir + "Lmat_backup.npy", learner.learnTime)
-        np.save(data_dir + "chain_backup.npy", score)
-        np.save(data_dir + "state_grid_backup.npy", state_grid)
-        np.save(data_dir + "state_num_backup.npy", state_num)
+        np.save(data_dir + "Qmat_backup3.npy", learner.Q)
+        np.save(data_dir + "Lmat_backup3.npy", learner.learnTime)
+        np.save(data_dir + "chain_backup3.npy", score)
+        np.save(data_dir + "state_grid_backup3.npy", state_grid)
+        np.save(data_dir + "state_num_backup3.npy", state_num)
+
 
     '''
     print "################### Score = " + \
@@ -344,15 +345,14 @@ while ii < 3000:
               ")\t" + str(State) + "/" + str(totalState)
     # Reset the state of the learner.
     learner.reset()
-
 # save result
 print "############################################################################"
 print "Saving results...."
-np.save(data_dir + "last/Qmat_manual.npy", learner.Q)
-np.save(data_dir + "last/Lmat_manual.npy", learner.learnTime)
-np.save(data_dir + "last/chain_manual.npy", score)
+np.save(data_dir + "last/Qmat_manual3.npy", learner.Q)
+np.save(data_dir + "last/Lmat_manual3.npy", learner.learnTime)
+np.save(data_dir + "last/chain_manual3.npy", score)
 
-np.save(data_dir + "last/state_grid_manual.npy", state_grid)
-np.save(data_dir + "last/state_num_manual.npy", state_num)
+np.save(data_dir + "last/state_grid_manual3.npy", state_grid)
+np.save(data_dir + "last/state_num_manual3.npy", state_num)
 print "Finished! Remember to copy from '/last/' to corresponding folder"
 print "############################################################################"
