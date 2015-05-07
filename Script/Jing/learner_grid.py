@@ -28,11 +28,11 @@ class Learner:
 
         # initiate Q matrix
         self.grid_x_len = 25
-        self.grid_x_rgn = [-50, 350]
-        self.grid_p_len = 25
-        self.grid_p_rgn = [-250, 250]
-        self.grid_v_len = 20
-        self.grid_v_rgn = [-40, 40]
+        self.grid_x_rgn = [-100, 400]
+        self.grid_p_len = 10
+        self.grid_p_rgn = [-200, 200]
+        self.grid_v_len = 5
+        self.grid_v_rgn = [-40, 20]
 
         self.grid_v = [-22.0, -15.0, -11.0, -7.0, -4.0,
                        -1.0, 2.0, 6.0, 9.0, 13.0]
@@ -295,8 +295,8 @@ if reset is True:
     # learner.Q = np.load("Qmat_manual.npy")
     # learner.learnTime = np.load("Lmat_manual.npy")
 
-#while score_cur < 5000:
-while ii < 5000:
+#while score_cur < 3000:
+while ii < 3000:
     ii += 1
     # Make a new monkey object.
     swing = SwingyMonkey(sound=False,            # Don't play sounds.
