@@ -1,4 +1,4 @@
-# CS181-Practical-4
+# AI for SwingyMonkey
 
 
 >		(づ｡◕‿‿◕｡)づ	 ~~ last one ~~
