@@ -1,9 +1,10 @@
 # AI for SwingyMonkey
 
-
+<!---
 >		(づ｡◕‿‿◕｡)づ	 ~~ last one ~~
 
 ![MacDown Screenshot](http://www.ladym.com/wp-content/uploads/2012/04/ladym_greenteamc_whole_h.jpg)
+--->
 
 ## Logistics
 
