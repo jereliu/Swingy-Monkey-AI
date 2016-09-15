@@ -4,11 +4,11 @@
 >		(づ｡◕‿‿◕｡)づ	 ~~ last one ~~
 
 ![MacDown Screenshot](http://www.ladym.com/wp-content/uploads/2012/04/ladym_greenteamc_whole_h.jpg)
+* Team Name: la dernière dame M
 --->
 
 ## Logistics
 
-* Team Name: la dernière dame M
 * Tip on installing [pygame](http://stackoverflow.com/questions/22314904/installing-pygame-with-enthought-canopy-on-mac):
 
 >     brew install sdl sdl_ttf sdl_image sdl_mixer
